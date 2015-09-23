@@ -1,5 +1,4 @@
-CELLSIZE = 30;//px
-SCREEN_ADJ = 0.95;
+
 
 var Grid = renderGrid(CELLSIZE, SCREEN_ADJ);
 var R = Object.keys(Grid).length;

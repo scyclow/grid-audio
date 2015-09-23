@@ -19,33 +19,32 @@ var source;
 navigator.getUserMedia (
   { audio: true },
   function success(stream) {
-     source = audioCtx.createMediaStreamSource(stream);
-     source.connect(analyser);
+    source = audioCtx.createMediaStreamSource(stream);
+    source.connect(analyser);
 
-     visualize();
+    visualize();
+    start();
   },
   function failure(err) {
-     console.log('The following gUM error occured: ' + err);
+    console.log('The following gUM error occured: ' + err);
   }
 );
 
+var cap = 46;
 function modifyGrid(input) {
-  var sum = 0, len = input.length;
+  var sum = 0;
   var max = 0;
-  var zeroCount = 0
 
-  for (var i = 0; i < len && zeroCount <= 10; i++) {
+  for (var i = 0; i < cap; i++) {
     var val = input[i];
-    zeroCount = val ? 0 : zeroCount + 1;
 
     max = Math.max(max, val);
     sum += val;
   }
 
-  audioInput.len = i - zeroCount;
-  // audioInput.data = input.slice(0, audioInput.len);
-  // audioInput.max = max;
-  audioInput.avg = sum / audioInput.len;
+  audioInput.data = input.slice(0, cap);
+  audioInput.max = max;
+  audioInput.avg = sum / cap;
 }
 
 function visualize(thing) {

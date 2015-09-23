@@ -1,5 +1,6 @@
+
 var auto = {
-  active: true,
+  active: false,
   TIME: 75,
   PROB: 0.5,
 
@@ -17,11 +18,11 @@ var auto = {
     var gColor = Math.ceil( Math.random()*5 );
     var bColor = Math.floor( Math.random()*6 );
 
-    randExec(0.75, newGrowth, gColor);
-    randExec(0.75, colors.changeBase, bColor);
+    randExec(AUTO.GROWTH, newGrowth, gColor);
+    randExec(AUTO.GROWTH, colors.changeBase, bColor);
 
-    randExec(0.25, erase);
-  }  
+    randExec(AUTO.ERASE, erase);
+  }
 }
 
 function randExec(prob, cmd, arg) {

@@ -13,6 +13,7 @@ function ColorPalette() {
 
   this.changeBase = function(n) {
     this.active = ORIGINAL_COLORS;
+    n = n || Math.floor(Math.random() * 6);
     for (var i=0; i<n; i++) {
       this.active.push( this.active.shift() );
     }

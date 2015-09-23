@@ -1,0 +1,24 @@
+{
+  "name": "grid-audio",
+  "version": "1.0.0",
+  "description": "#Controls  ### Toggle Autopilot: * ESC",
+  "main": "index.html",
+  "dependencies": {
+    "serve-static": "^1.10.0",
+    "connect": "^3.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scyclow/grid-audio.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scyclow/grid-audio/issues"
+  },
+  "homepage": "https://github.com/scyclow/grid-audio"
+}

@@ -1,25 +1,102 @@
-TIME = 30;//ms
-
 var colors = new ColorPalette; // colors.js
 var growths = [new Growth(START, colors.sample(false))]; //growth.js
 
 function run() {
-  var size = ((audioInput.avg-50)/80) * CELLSIZE;
-  document.getElementById('num').innerHTML = audioInput.avg;
-  // {
-    // var data = ;
-    audioInput.avg > 80 ? newGrowth(Math.floor(Math.random() * 6)) : null
-
-  // }
+  var size = renderAudio();
+  auto.run();
   renderGrowths();
   warpCells(size); // warp.js
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
+function start() {
   setInterval(run, TIME);
-  // setInterval(auto.run, auto.TIME); // auto.js
+  setInterval(()=>updateMeter(audioInput), TIME*4);
+};
+
+function AudioState(threshold, callback) {
+  this.threshold = threshold;
+  this.callback = callback;
+  this.aboveThreshold = false;
+};
+
+AudioState.prototype.checkThreshold = function(num, ignore) {
+  if (num > this.threshold && (ignore || !this.aboveThreshold)) {
+    this.callback();
+    this.aboveThreshold = true;
+  } else if (num < this.threshold && this.aboveThreshold) {
+    this.aboveThreshold = false;
+  }
+};
+
+var generalEvent = () => {
+  randExec(0.2, ()=>colors.changeBase());
+  randExec(0.2, erase);
+  newGrowth();
+}
+
+var avgEvent = new AudioState(EVENT_THRESHOLDS[0], () => {
+  colors.changeBase();
+  generalEvent();
 });
 
+var middleEvent = new AudioState(EVENT_THRESHOLDS[1], generalEvent);
+
+var lastEvent = new AudioState(EVENT_THRESHOLDS[2], generalEvent);
+
+var failsafe = () => auto.active = audioInput.avg>FAILSAFE_THRESHOLD;
+
+
+function renderAudio() {
+  var avg = audioInput.avg;
+  var data = audioInput.data;
+
+  avgEvent.checkThreshold(avg);
+  middleEvent.checkThreshold(Math.abs(audioInput.data[20] - audioInput.avg));
+  lastEvent.checkThreshold(audioInput.max - audioInput.data[45]);
+
+  failsafe();
+
+  return  Math.pow(CELLSIZE, (avg/AUDIO_SIZE_THRESHOLD));
+}
+
+///// METER /////
+var meterArr = [];
+var meterLen = 45;
+var meterStep = 5;
+var meter = document.getElementById('meter');
+var cellAdj = document.createElement('div');
+cellAdj.setAttribute('id', 'cell-adj');
+var meterAvg = document.createElement('div');
+meterAvg.setAttribute('id', 'meter-avg');
+
+for (var i=0; i<=meterLen; i+=meterStep) {
+  var out = document.createElement('div');
+  out.setAttribute('id', 'out-'+i);
+  out.setAttribute('class', 'output');
+  meterArr[i] = out;
+  meter.appendChild(out);
+}
+meter.appendChild(cellAdj);
+meter.appendChild(meterAvg);
+
+function updateMeter(input) {
+  for (var i=0; i<=meterLen; i+=meterStep) {
+    var elm = meterArr[i];
+    if (elm) elm.innerHTML = input.data[i];
+  }
+  cellAdj.innerHTML = CELL_SIZE_ADJ.toFixed(1);
+  meterAvg.innerHTML = input.avg.toFixed(1);
+}
+
+var meterVisible = false;
+var meter = document.getElementById('meter');
+function toggleMeter() {
+  meterVisible = !meterVisible;
+  meter.style['visibility'] = meterVisible ? 'visible' : 'hidden';
+}
+
+
+//// KEYDOWN ////
 window.onkeydown = function(e){
   switch (e.keyCode) {
     case 32: erase(); break;// spacebar
@@ -39,6 +116,7 @@ window.onkeydown = function(e){
     case 37: changeCellRadius(-0.1); break;// left
     case 39: changeCellRadius(0.1); break;// right
     case 27: auto.toggle(); break;// escape
+    case 192: toggleMeter(); break;// `
   }
   // if (e.keyCode === 32) { erase(); } // spacebar
   // if (e.keyCode === 67) { newGrowth(1); } // c
