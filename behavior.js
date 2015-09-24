@@ -66,8 +66,13 @@ var meterStep = 5;
 var meter = document.getElementById('meter');
 var cellAdj = document.createElement('div');
 cellAdj.setAttribute('id', 'cell-adj');
+cellAdj.setAttribute('class', 'special');
 var meterAvg = document.createElement('div');
 meterAvg.setAttribute('id', 'meter-avg');
+meterAvg.setAttribute('class', 'special');
+var sense = document.createElement('div');
+sense.setAttribute('id', 'sense');
+sense.setAttribute('class', 'special');
 
 for (var i=0; i<=meterLen; i+=meterStep) {
   var out = document.createElement('div');
@@ -78,6 +83,7 @@ for (var i=0; i<=meterLen; i+=meterStep) {
 }
 meter.appendChild(cellAdj);
 meter.appendChild(meterAvg);
+meter.appendChild(sense);
 
 function updateMeter(input) {
   for (var i=0; i<=meterLen; i+=meterStep) {
@@ -86,6 +92,7 @@ function updateMeter(input) {
   }
   cellAdj.innerHTML = CELL_SIZE_ADJ.toFixed(1);
   meterAvg.innerHTML = input.avg.toFixed(1);
+  sense.innerHTML = analyser.minDecibels;
 }
 
 var meterVisible = false;
@@ -116,6 +123,8 @@ window.onkeydown = function(e){
     case 37: changeCellRadius(-0.1); break;// left
     case 39: changeCellRadius(0.1); break;// right
     case 27: auto.toggle(); break;// escape
+    case 189: analyser.minDecibels += 10; break;// -
+    case 187: analyser.minDecibels -= 10; break;// +
     case 192: toggleMeter(); break;// `
   }
   // if (e.keyCode === 32) { erase(); } // spacebar
