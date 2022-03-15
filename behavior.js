@@ -97,6 +97,7 @@ function updateMeter(input) {
 
 var meterVisible = false;
 var meter = document.getElementById('meter');
+meter.style['visibility'] = 'hidden';
 function toggleMeter() {
   meterVisible = !meterVisible;
   meter.style['visibility'] = meterVisible ? 'visible' : 'hidden';

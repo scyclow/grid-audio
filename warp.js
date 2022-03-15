@@ -22,6 +22,6 @@ function changeCellSize(amount) {
   CELL_SIZE_ADJ += amount;
 }
 
-// function changeCellRadius(amount) {
-//   CELL_RAD_ADJ += amount;
-// }
+function changeCellRadius(amount) {
+  CELL_RAD_ADJ += amount;
+}

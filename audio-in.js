@@ -8,27 +8,30 @@ navigator.getUserMedia = (
   navigator.msGetUserMedia
 );
 
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+var audioCtx, analyser, source;
 
-var analyser = audioCtx.createAnalyser();
-analyser.minDecibels = -130; // inverse relationship with sensitivity?
-analyser.maxDecibels = -10;
-analyser.smoothingTimeConstant = 0.85;
+document.getElementById('start').onclick = function () {
+  document.getElementById('instructions').innerHTML = ''
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.minDecibels = -130; // inverse relationship with sensitivity?
+  analyser.maxDecibels = -10;
+  analyser.smoothingTimeConstant = 0.85;
 
-var source;
-navigator.getUserMedia (
-  { audio: true },
-  function success(stream) {
-    source = audioCtx.createMediaStreamSource(stream);
-    source.connect(analyser);
+  navigator.getUserMedia(
+    { audio: true },
+    function success(stream) {
+      source = audioCtx.createMediaStreamSource(stream);
+      source.connect(analyser);
 
-    visualize();
-    start();
-  },
-  function failure(err) {
-    console.log('The following gUM error occured: ' + err);
-  }
-);
+      visualize();
+      start();
+    },
+    function failure(err) {
+      console.log('The following gUM error occured: ' + err);
+    }
+  );
+}
 
 var cap = 46;
 function modifyGrid(input) {
